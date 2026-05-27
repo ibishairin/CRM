@@ -11,9 +11,9 @@ class Ticket(Base):
     customer_email= Column(String, nullable=False)
     subject = Column(String,nullable=False)
     description = Column(String)
-    status=Column(Enum("Open""Progress","Closed"),default="Open")
+    status=Column(Enum("Open", "Progress", "Closed"), default="Open")
     created_at=Column(DateTime, default=datetime.now(UTC))
-    updated_at=Column(DateTime, default=datetime.now(UTC))
+    updated_at=Column(DateTime, default=datetime.now(UTC), onupdate=datetime.now(UTC))
     notes = relationship('Note', back_populates='ticket')
 
 class Note(Base):

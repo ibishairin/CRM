@@ -16,12 +16,18 @@ class NoteResponse(NoteCreate):
     id: int
     created_at: datetime
 
+    class Config:
+        orm_mode = True
+
 class TicketResponse(TicketCreate):
     ticket_id: str
     status: str
     updated_at : datetime
     created_at :datetime
     notes :list[NoteResponse] = []
+
+    class Config:
+        orm_mode = True
 
 class Status(Enum):
     OPEN = 'open'

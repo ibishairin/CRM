@@ -5,8 +5,18 @@ from app.models import Ticket, Note
 from app.schemas import TicketCreate, TicketResponse, Status , TicketUpdate
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
+from uuid import uuid4
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,15 +27,17 @@ def root():
 @app.post("/api/tickets", status_code=status.HTTP_201_CREATED)
 def create_ticket(ticket:TicketCreate, db:Annotated[Session,Depends(get_db)]):
     new_ticket = Ticket(
+        ticket_id = f"TMP-{uuid4().hex}",
         customer_name = ticket.customer_name,
         customer_email = ticket.customer_email,
         subject = ticket.subject,
         description = ticket.description
     )
     db.add(new_ticket)
+    db.flush()
+    new_ticket.ticket_id =(f'TKT-{new_ticket.id:03d}')
     db.commit()
     db.refresh(new_ticket)
-    new_ticket.ticket_id =(f'TKT-{new_ticket.id:03d}')
     return new_ticket
 
 
@@ -36,7 +48,7 @@ def get_tickets(db : Annotated[Session, Depends(get_db)],
     query = db.query(Ticket)
     if status:
         query = query.filter(
-            Ticket.status == status
+            Ticket.status == status.value.capitalize()
         )
     if q:
         query = query.filter(
@@ -58,11 +70,10 @@ def update_ticket(ticket_id: str,ticket_update: TicketUpdate,db: Annotated[Sessi
     ticket = db.query(Ticket).filter(Ticket.ticket_id == ticket_id).first()
     if not ticket:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Ticket not found")
-    ticket.status = ticket_update.status
+    ticket.status = ticket_update.status.value.capitalize()
     if ticket_update.notes:
         new_note = Note(ticket_id=ticket.ticket_id,note_text=ticket_update.notes)
         db.add(new_note)
-    db.add(new_note)
     db.commit()
     db.refresh(ticket)
     return {

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Ticket Desk</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="topbar">
+            <h1 class="title">Customer Relationship Management</h1>
+            <nav class="nav">
+                <a class="btn" href="#/">Home</a>
+                <a class="btn primary" href="#/new">New Ticket</a>
+            </nav>
+        </header>
+
+        <section id="view-home" class="card">
+            <div class="row">
+                <input id="searchInput" type="text" placeholder="Search by ticket, subject, customer or email..." />
+                <select id="statusFilter">
+                    <option value="all">All statuses</option>
+                    <option value="open">Open</option>
+                    <option value="progress">Progress</option>
+                    <option value="closed">Closed</option>
+                </select>
+            </div>
+            <div class="muted" id="ticketCount">Loading tickets...</div>
+            <div class="ticket-list" id="ticketList"></div>
+        </section>
+
+        <section id="view-new" class="card hidden">
+            <h2 style="margin-top: 0;">Create New Ticket</h2>
+            <form id="ticketForm">
+                <div class="row">
+                    <input id="customerName" type="text" placeholder="Customer name" required />
+                    <input id="customerEmail" type="email" placeholder="Customer email" required />
+                </div>
+                <input id="subject" type="text" placeholder="Subject" required style="margin-bottom: 10px;" />
+                <textarea id="description" placeholder="Describe the issue..."></textarea>
+                <div style="margin-top: 12px; display: flex; gap: 8px;">
+                    <button type="submit" class="btn primary">Create Ticket</button>
+                    <a href="#/" class="btn">Cancel</a>
+                </div>
+                <div id="formMessage"></div>
+            </form>
+        </section>
+
+        <section id="view-detail" class="card hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <h2 id="detailTitle" style="margin: 0;">Ticket Detail</h2>
+                <a href="#/" class="btn">Back</a>
+            </div>
+            <div id="detailContent"></div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
